@@ -15,6 +15,7 @@ import { generateInstanceId } from './util';
 export interface ServerSideSdkConfig {
     tokens: string[];
 }
+
 export interface IProxyOption {
     unleashUrl?: string;
     unleashApiToken?: string;
@@ -112,6 +113,7 @@ function loadCustomStrategies(path?: string): Strategy[] | undefined {
     }
     return undefined;
 }
+
 function removeTrailingPath(path: string): string {
     return path.endsWith('/') ? path.slice(0, -1) : path;
 }
