@@ -5,7 +5,7 @@ export function generateInstanceId(): string {
     let info: UserInfo<string> | undefined;
     try {
         info = userInfo();
-    } catch (e) {
+    } catch (error: unknown) {
         // unable to read info;
     }
 

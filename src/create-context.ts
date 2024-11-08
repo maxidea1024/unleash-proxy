@@ -5,6 +5,7 @@ function tryParseDate(dateString: string | undefined): Date | undefined {
     if (!dateString) {
         return undefined;
     }
+    
     const parsedDate = new Date(dateString);
     if (!Number.isNaN(parsedDate.getTime())) {
         return parsedDate;
