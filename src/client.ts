@@ -44,27 +44,18 @@ export interface IClient extends EventEmitter {
         toggleNames: string[],
         context: Context,
     ) => FeatureToggleStatus[];
-
     getAllToggles: (context: Context) => FeatureToggleStatus[];
-
     getFeatureToggleDefinitions(): FeatureInterface[];
-
     registerMetrics(metrics: IMetrics): void;
-
     isReady(): boolean;
 }
 
 class Client extends EventEmitter implements IClient {
     unleash: Unleash;
-
     private unleashApiToken: string;
-
     private environment?: string;
-
     private metrics: Metrics;
-
     private logger: Logger;
-
     private ready: boolean = false;
 
     constructor(config: IProxyConfig, unleash: Unleash, metrics: Metrics) {
