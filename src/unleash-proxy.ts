@@ -30,21 +30,13 @@ import { createContexMiddleware } from './context-middleware';
 
 export default class UnleashProxy {
     private logger: Logger;
-
     private clientKeys: string[];
-
     private serverSideTokens: string[];
-
     private clientKeysHeaderName: string;
-
     private client: IClient;
-
     private contextEnrichers: ContextEnricher[];
-
     private ready = false;
-
     public middleware: Router;
-
     private enableAllEndpoint = false;
 
     constructor(
