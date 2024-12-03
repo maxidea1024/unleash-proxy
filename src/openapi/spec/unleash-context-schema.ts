@@ -1,24 +1,24 @@
 import { type CreateSchemaType, createSchemaObject } from '../openapi-types';
 
 export const schema = {
-    type: 'object',
+  type: 'object',
+  properties: {
+    appName: { type: 'string' },
+    environment: { type: 'string' },
+    userId: { type: 'string' },
+    sessionId: { type: 'string' },
+    remoteAddress: { type: 'string' },
     properties: {
-        appName: { type: 'string' },
-        environment: { type: 'string' },
-        userId: { type: 'string' },
-        sessionId: { type: 'string' },
-        remoteAddress: { type: 'string' },
-        properties: {
-            type: 'object',
-            additionalProperties: {
-                type: 'string',
-            },
-            example: {
-                region: 'Africa',
-                betaTester: 'true',
-            },
-        },
+      type: 'object',
+      additionalProperties: {
+        type: 'string',
+      },
+      example: {
+        region: 'Africa',
+        betaTester: 'true',
+      },
     },
+  },
 } as const;
 
 export type UnleashContextSchema = CreateSchemaType<typeof schema>;

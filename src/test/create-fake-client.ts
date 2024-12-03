@@ -5,23 +5,23 @@ import FakeMetrics from './metrics.mock';
 import FakeUnleash from './unleash.mock';
 
 export const createFakeClient = (
-    config: IProxyConfig,
+  config: IProxyConfig,
 ): { client: Client; metrics: FakeMetrics } => {
-    const unleash = new FakeUnleash({
-        ...config,
-        url: config.unleashUrl,
-        appName: config.unleashAppName,
-    });
+  const unleash = new FakeUnleash({
+    ...config,
+    url: config.unleashUrl,
+    appName: config.unleashAppName,
+  });
 
-    const metrics = new FakeMetrics({
-        appName: config.unleashAppName,
-        instanceId: config.unleashInstanceId,
-        metricsInterval: config.metricsInterval,
-        url: config.unleashUrl,
-        strategies: defaultStrategies.map((s) => s.name),
-    });
+  const metrics = new FakeMetrics({
+    appName: config.unleashAppName,
+    instanceId: config.unleashInstanceId,
+    metricsInterval: config.metricsInterval,
+    url: config.unleashUrl,
+    strategies: defaultStrategies.map((s) => s.name),
+  });
 
-    const client = new Client(config, unleash, metrics);
+  const client = new Client(config, unleash, metrics);
 
-    return { client, metrics };
+  return { client, metrics };
 };

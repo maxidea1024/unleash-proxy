@@ -2,7 +2,7 @@ import type { FromSchema, JSONSchema } from 'json-schema-to-ts';
 
 // Recursively remove readonly modifiers from properties.
 type DeepMutable<T> = {
-    -readonly [P in keyof T]: DeepMutable<T[P]>;
+  -readonly [P in keyof T]: DeepMutable<T[P]>;
 };
 
 // Create a type from a const schema object.

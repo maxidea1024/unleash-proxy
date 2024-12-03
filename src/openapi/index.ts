@@ -11,53 +11,53 @@ import { variantSchema } from './spec/variant-schema';
 // Create the base OpenAPI schema, with everything except paths.
 
 export const createOpenApiSchema = (
-    serverUrl?: string,
-    clientKeysHeaderName: string = 'Authorization',
+  serverUrl?: string,
+  clientKeysHeaderName: string = 'Authorization',
 ): Omit<OpenAPIV3.Document, 'paths'> => ({
-    openapi: '3.0.3',
-    servers: serverUrl ? [{ url: serverUrl }] : [],
-    info: {
-        title: 'Unleash Proxy API',
-        version: process.env.npm_package_version || '',
+  openapi: '3.0.3',
+  servers: serverUrl ? [{ url: serverUrl }] : [],
+  info: {
+    title: 'Unleash Proxy API',
+    version: process.env.npm_package_version || '',
+  },
+  security: [
+    {
+      apiKey: [],
     },
-    security: [
-        {
-            apiKey: [],
-        },
-    ],
-    tags: [
-        {
-            name: 'Proxy client',
-            description:
-                'Feature toggle endpoints intended to be consumed by proxy clients.',
-        },
-        {
-            name: 'Server-side client',
-            description:
-                'Feature toggle endpoints related to and intended to be consumed by server-side clients and other proxies.',
-        },
-        {
-            name: 'Operational',
-            description: 'Endpoints related to operating the Unleash proxy.',
-        },
-    ],
-    components: {
-        securitySchemes: {
-            apiKey: {
-                type: 'apiKey',
-                in: 'header',
-                name: clientKeysHeaderName,
-            },
-        },
-        schemas: {
-            apiRequestSchema,
-            featureSchema,
-            featuresSchema,
-            lookupTogglesSchema,
-            registerMetricsSchema,
-            registerClientSchema,
-            unleashContextSchema,
-            variantSchema,
-        },
+  ],
+  tags: [
+    {
+      name: 'Proxy client',
+      description:
+        'Feature toggle endpoints intended to be consumed by proxy clients.',
     },
+    {
+      name: 'Server-side client',
+      description:
+        'Feature toggle endpoints related to and intended to be consumed by server-side clients and other proxies.',
+    },
+    {
+      name: 'Operational',
+      description: 'Endpoints related to operating the Unleash proxy.',
+    },
+  ],
+  components: {
+    securitySchemes: {
+      apiKey: {
+        type: 'apiKey',
+        in: 'header',
+        name: clientKeysHeaderName,
+      },
+    },
+    schemas: {
+      apiRequestSchema,
+      featureSchema,
+      featuresSchema,
+      lookupTogglesSchema,
+      registerMetricsSchema,
+      registerClientSchema,
+      unleashContextSchema,
+      variantSchema,
+    },
+  },
 });
