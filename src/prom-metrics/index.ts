@@ -1,4 +1,4 @@
-import { createGauge, type Gauge } from './createGauge';
+import { type Gauge, createGauge } from './createGauge';
 import { createCounter } from './createCounter';
 
 export * from './createCounter';

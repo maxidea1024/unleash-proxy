@@ -3,20 +3,20 @@ import requireContentType from '../content-type-checker';
 
 const mockRequest =
   (transferEncoding: string | undefined) =>
-    (contentType?: string): Request => {
-      const headers = {
-        'content-type': contentType,
-        'transfer-encoding': transferEncoding,
-      };
-
-      // @ts-expect-error (It's not a real request)
-      return {
-        header: (name: string) =>
-          //@ts-expect-error (yes, this may fail)
-          headers[name.toLowerCase()],
-        headers,
-      };
+  (contentType?: string): Request => {
+    const headers = {
+      'content-type': contentType,
+      'transfer-encoding': transferEncoding,
     };
+
+    // @ts-expect-error (It's not a real request)
+    return {
+      header: (name: string) =>
+        //@ts-expect-error (yes, this may fail)
+        headers[name.toLowerCase()],
+      headers,
+    };
+  };
 
 const mockRequestWithBody = mockRequest('chunked');
 
@@ -45,11 +45,7 @@ describe('Content-type checker middleware', () => {
     const middleware = requireContentType();
     const t = jest.fn();
     const fail = jest.fn();
-    middleware(
-      mockRequestWithBody('application/json'),
-      expectNoCall(fail),
-      t,
-    );
+    middleware(mockRequestWithBody('application/json'), expectNoCall(fail), t);
     middleware(mockRequestWithBody('text/plain'), returns415(t), fail);
     expect(t).toHaveBeenCalledTimes(2);
     expect(fail).toHaveBeenCalledTimes(0);
@@ -73,11 +69,7 @@ describe('Content-type checker middleware', () => {
     const middleware = requireContentType('application/yaml');
     const t = jest.fn();
     const fail = jest.fn();
-    middleware(
-      mockRequestWithBody('application/yaml'),
-      expectNoCall(fail),
-      t,
-    );
+    middleware(mockRequestWithBody('application/yaml'), expectNoCall(fail), t);
     middleware(mockRequestWithBody('text/html'), returns415(t), fail);
     middleware(mockRequestWithBody('text/plain'), returns415(t), fail);
     expect(t).toHaveBeenCalledTimes(3);
@@ -88,11 +80,7 @@ describe('Content-type checker middleware', () => {
     const middleware = requireContentType('application/yaml');
     const t = jest.fn();
     const fail = jest.fn();
-    middleware(
-      mockRequestWithBody('application/json'),
-      returns415(t),
-      fail,
-    );
+    middleware(mockRequestWithBody('application/json'), returns415(t), fail);
     expect(t).toHaveBeenCalledTimes(1);
     expect(fail).toHaveBeenCalledTimes(0);
   });
@@ -120,11 +108,7 @@ describe('Content-type checker middleware', () => {
       expectNoCall(fail),
       succeed,
     );
-    middleware(
-      mockRequestWithBody('text/plain'),
-      returns415(succeed),
-      fail,
-    );
+    middleware(mockRequestWithBody('text/plain'), returns415(succeed), fail);
     expect(succeed).toHaveBeenCalledTimes(4);
     expect(fail).toHaveBeenCalledTimes(0);
   });
@@ -133,11 +117,7 @@ describe('Content-type checker middleware', () => {
     const middleware = requireContentType('application/yaml');
     const t = jest.fn();
     const fail = jest.fn();
-    middleware(
-      mockRequestWithBody('application/json'),
-      returns415(t),
-      fail,
-    );
+    middleware(mockRequestWithBody('application/json'), returns415(t), fail);
     expect(t).toHaveBeenCalledTimes(1);
     expect(fail).toHaveBeenCalledTimes(0);
   });

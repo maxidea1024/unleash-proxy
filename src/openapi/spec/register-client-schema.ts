@@ -28,10 +28,7 @@ export const schema = {
         'At which interval, in milliseconds, will this client be expected to send metrics',
     },
     started: {
-      oneOf: [
-        { type: 'string', format: 'date-time' },
-        { type: 'number' },
-      ],
+      oneOf: [{ type: 'string', format: 'date-time' }, { type: 'number' }],
       description:
         'When this client started. Should be reported as ISO8601 time.',
     },

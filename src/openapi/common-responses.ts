@@ -42,8 +42,7 @@ export const badRequestResponse: OpenAPIV3.ResponseObject = {
             {
               keyword: 'required',
               dataPath: '.body',
-              schemaPath:
-                '#/components/schemas/registerMetricsSchema/required',
+              schemaPath: '#/components/schemas/registerMetricsSchema/required',
               params: {
                 missingProperty: 'appName',
               },
@@ -113,8 +112,7 @@ export const notImplementedError: OpenAPIV3.ResponseObject = {
         properties: {
           error: {
             type: 'string',
-            description:
-              'A description of the error that occurred.',
+            description: 'A description of the error that occurred.',
           },
         },
         example: {

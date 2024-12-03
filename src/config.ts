@@ -214,10 +214,7 @@ function loadCorsOptions(option: IProxyOption): CorsOptions {
     exposedHeaders: process.env.CORS_EXPOSED_HEADERS || 'ETag',
     credentials: safeBoolean(process.env.CORS_CREDENTIALS, false),
     maxAge: safeNumber(process.env.CORS_MAX_AGE, 172800),
-    preflightContinue: safeBoolean(
-      process.env.CORS_PREFLIGHT_CONTINUE,
-      false,
-    ),
+    preflightContinue: safeBoolean(process.env.CORS_PREFLIGHT_CONTINUE, false),
     optionsSuccessStatus: safeNumber(
       process.env.CORS_OPTIONS_SUCCESS_STATUS,
       204,
@@ -281,9 +278,7 @@ function chooseLogger(option: IProxyOption): Logger {
 export function createProxyConfig(option: IProxyOption): IProxyConfig {
   const unleashUrl = option.unleashUrl || process.env.UNLEASH_URL;
   if (!unleashUrl) {
-    throw new TypeError(
-      'You must specify the unleashUrl option (UNLEASH_URL)',
-    );
+    throw new TypeError('You must specify the unleashUrl option (UNLEASH_URL)');
   }
 
   const unleashApiToken =
@@ -326,9 +321,7 @@ export function createProxyConfig(option: IProxyOption): IProxyConfig {
     unleashUrl,
     unleashApiToken,
     unleashAppName:
-      option.unleashAppName ||
-      process.env.UNLEASH_APP_NAME ||
-      'unleash-proxy',
+      option.unleashAppName || process.env.UNLEASH_APP_NAME || 'unleash-proxy',
     unleashInstanceId,
     customStrategies,
     expCustomEnrichers: customEnrichers,
@@ -341,8 +334,7 @@ export function createProxyConfig(option: IProxyOption): IProxyConfig {
       option.metricsInterval ||
       safeNumber(process.env.UNLEASH_METRICS_INTERVAL, 30_000),
     metricsJitter:
-      option.metricsJitter ||
-      safeNumber(process.env.UNLEASH_METRICS_JITTER, 0),
+      option.metricsJitter || safeNumber(process.env.UNLEASH_METRICS_JITTER, 0),
     environment: option.environment || process.env.UNLEASH_ENVIRONMENT,
     projectName: option.projectName || process.env.UNLEASH_PROJECT_NAME,
     namePrefix: option.namePrefix || process.env.UNLEASH_NAME_PREFIX,
@@ -360,8 +352,7 @@ export function createProxyConfig(option: IProxyOption): IProxyConfig {
     enableAllEndpoint:
       option.enableAllEndpoint ||
       safeBoolean(process.env.ENABLE_ALL_ENDPOINT, false),
-    enableOAS:
-      option.enableOAS || safeBoolean(process.env.ENABLE_OAS, false),
+    enableOAS: option.enableOAS || safeBoolean(process.env.ENABLE_OAS, false),
     cors: loadCorsOptions(option),
     ...loadHttpOptions(option),
   };

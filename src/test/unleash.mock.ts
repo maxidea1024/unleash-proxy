@@ -25,11 +25,7 @@ class FakeUnleash extends Unleash {
     context?: Context,
     fallbackFunction?: FallbackFunction,
   ): boolean;
-  isEnabled(
-    name: string,
-    context?: Context,
-    fallbackValue?: boolean,
-  ): boolean;
+  isEnabled(name: string, context?: Context, fallbackValue?: boolean): boolean;
   isEnabled(name: any, context?: any, fallbackValue?: any): boolean {
     this.contexts.push(context);
     // console.log(name, context, fallbackValue);

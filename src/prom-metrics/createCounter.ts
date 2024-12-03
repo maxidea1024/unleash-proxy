@@ -1,4 +1,4 @@
-import { Counter as PromCounter, type CounterConfiguration } from 'prom-client';
+import { type CounterConfiguration, Counter as PromCounter } from 'prom-client';
 
 /**
  * A wrapped instance of prom-client's Counter, overriding some of its methods for enhanced functionality and type-safety.
@@ -33,8 +33,7 @@ export const createCounter = <T extends string>(
    * @returns The Counter instance with the applied labels, allowing for method chaining.
    */
   // eslint-disable-next-line @typescript-eslint/no-shadow
-  const labels = (labels: Record<T, string | number>) =>
-    counter.labels(labels);
+  const labels = (labels: Record<T, string | number>) => counter.labels(labels);
 
   /**
    * Increments the counter by a specified value or by 1 if no value is provided.

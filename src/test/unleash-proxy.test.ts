@@ -10,10 +10,7 @@ test('Should return empty list of toggles', () => {
   const client = new MockClient();
 
   const proxySecrets = ['sdf'];
-  const app = createApp(
-    { proxySecrets, unleashUrl, unleashApiToken },
-    client,
-  );
+  const app = createApp({ proxySecrets, unleashUrl, unleashApiToken }, client);
   client.emit('ready');
 
   return request(app)
@@ -42,10 +39,7 @@ test('Should return list of toggles', () => {
   const client = new MockClient(toggles);
 
   const proxySecrets = ['sdf'];
-  const app = createApp(
-    { proxySecrets, unleashUrl, unleashApiToken },
-    client,
-  );
+  const app = createApp({ proxySecrets, unleashUrl, unleashApiToken }, client);
   client.emit('ready');
 
   return request(app)
@@ -74,10 +68,7 @@ test('Should handle POST with empty/nonsensical body', async () => {
   const client = new MockClient(toggles);
 
   const proxySecrets = ['sdf'];
-  const app = createApp(
-    { proxySecrets, unleashUrl, unleashApiToken },
-    client,
-  );
+  const app = createApp({ proxySecrets, unleashUrl, unleashApiToken }, client);
   client.emit('ready');
 
   await Promise.all(
@@ -101,10 +92,7 @@ test('Should handle POST with extra context properties', () => {
   const client = new MockClient();
 
   const proxySecrets = ['sdf'];
-  const app = createApp(
-    { proxySecrets, unleashUrl, unleashApiToken },
-    client,
-  );
+  const app = createApp({ proxySecrets, unleashUrl, unleashApiToken }, client);
   client.emit('ready');
 
   return request(app)
@@ -137,10 +125,7 @@ test('Should handle POST with toggle names', () => {
   const client = new MockClient(toggles);
 
   const proxySecrets = ['sdf'];
-  const app = createApp(
-    { proxySecrets, unleashUrl, unleashApiToken },
-    client,
-  );
+  const app = createApp({ proxySecrets, unleashUrl, unleashApiToken }, client);
   client.emit('ready');
 
   return request(app)
@@ -262,10 +247,7 @@ test('Should send in context to mock', async () => {
   const client = new MockClient(toggles);
 
   const proxySecrets = ['sdf'];
-  const app = createApp(
-    { proxySecrets, unleashUrl, unleashApiToken },
-    client,
-  );
+  const app = createApp({ proxySecrets, unleashUrl, unleashApiToken }, client);
   client.emit('ready');
 
   await request(app)
@@ -377,10 +359,7 @@ test('Should register metrics', () => {
   const client = new MockClient(toggles);
 
   const proxySecrets = ['sdf'];
-  const app = createApp(
-    { unleashUrl, unleashApiToken, proxySecrets },
-    client,
-  );
+  const app = createApp({ unleashUrl, unleashApiToken, proxySecrets }, client);
   client.emit('ready');
 
   return request(app)
@@ -401,10 +380,7 @@ test('Should register metrics an /all path as well', () => {
   const client = new MockClient(toggles);
 
   const proxySecrets = ['sdf'];
-  const app = createApp(
-    { unleashUrl, unleashApiToken, proxySecrets },
-    client,
-  );
+  const app = createApp({ unleashUrl, unleashApiToken, proxySecrets }, client);
   client.emit('ready');
 
   return request(app)
@@ -418,10 +394,7 @@ test('Should require metrics to have correct format', () => {
   const client = new MockClient();
 
   const proxySecrets = ['sdf'];
-  const app = createApp(
-    { unleashUrl, unleashApiToken, proxySecrets },
-    client,
-  );
+  const app = createApp({ unleashUrl, unleashApiToken, proxySecrets }, client);
   client.emit('ready');
 
   return request(app)
@@ -435,10 +408,7 @@ test('Should return errors as JSON', () => {
   const client = new MockClient();
 
   const proxySecrets = ['sdf'];
-  const app = createApp(
-    { unleashUrl, unleashApiToken, proxySecrets },
-    client,
-  );
+  const app = createApp({ unleashUrl, unleashApiToken, proxySecrets }, client);
   client.emit('ready');
 
   return request(app)
@@ -534,20 +504,14 @@ test('Should return 504 for proxy', () => {
 
   const app = createApp({ unleashUrl, unleashApiToken }, client);
 
-  return request(app)
-    .get('/proxy')
-    .set('Authorization', 'secret2')
-    .expect(503);
+  return request(app).get('/proxy').set('Authorization', 'secret2').expect(503);
 });
 
 test('Should allow every origin (*)', async () => {
   const client = new MockClient();
 
   const proxySecrets = ['sdf'];
-  const app = createApp(
-    { proxySecrets, unleashUrl, unleashApiToken },
-    client,
-  );
+  const app = createApp({ proxySecrets, unleashUrl, unleashApiToken }, client);
   client.emit('ready');
 
   const response = await request(app)
@@ -570,10 +534,7 @@ test('Should return the same origin based on cors options', async () => {
       unleashUrl,
       unleashApiToken,
       cors: {
-        origin: [
-          'https://example.com',
-          'https://demo.unleash-hosted.com',
-        ],
+        origin: ['https://example.com', 'https://demo.unleash-hosted.com'],
       },
     },
     client,
@@ -598,10 +559,7 @@ test('Should return 400 bad request for malformed JSON', async () => {
   const client = new MockClient();
 
   const proxySecrets = ['sdf'];
-  const app = createApp(
-    { proxySecrets, unleashUrl, unleashApiToken },
-    client,
-  );
+  const app = createApp({ proxySecrets, unleashUrl, unleashApiToken }, client);
   client.emit('ready');
 
   await request(app)
@@ -819,16 +777,10 @@ test('Should return 501 when all feature toggles is not enabled', () => {
   ]);
 
   const proxySecrets = ['sdf'];
-  const app = createApp(
-    { unleashUrl, unleashApiToken, proxySecrets },
-    client,
-  );
+  const app = createApp({ unleashUrl, unleashApiToken, proxySecrets }, client);
   client.emit('ready');
 
-  return request(app)
-    .get('/proxy/all')
-    .set('Authorization', 'sdf')
-    .expect(501);
+  return request(app).get('/proxy/all').set('Authorization', 'sdf').expect(501);
 });
 
 describe('Request content-types', () => {

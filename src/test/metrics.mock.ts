@@ -7,7 +7,7 @@ class FakeMetrics extends Metrics {
 
   recordedCountVariant: [string, string][] = [];
 
-  start() { }
+  start() {}
 
   count(name: string, enabled: boolean) {
     this.recordedCount.push([name, enabled]);
