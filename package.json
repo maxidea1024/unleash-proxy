@@ -11,7 +11,7 @@
     "test": "jest",
     "updateSnapshots": "jest -u",
     "prepare": "npm run build",
-    "dev": "ENABLE_OAS=true ts-node-dev src/start.ts",
+    "dev": "ENABLE_OAS=true ts-node-dev ./src/start.ts",
     "fmt": "biome format ./src --write",
     "fmt:check": "biome format ./src",
     "biome:ci": "biome ci ./src"

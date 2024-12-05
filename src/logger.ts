@@ -1,8 +1,3 @@
-/* eslint-disable class-methods-use-this */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 export enum LogLevel {
   debug = 'debug',
   info = 'info',
@@ -74,15 +69,17 @@ export class SimpleLogger implements Logger {
   }
 
   log(level: LogLevel, message: any, args: any[]) {
-    if (this.shouldLog(level)) {
-      if (this.useJson) {
-        console.log(JSON.stringify({ level, message, args }));
-      } else {
-        console.log(
-          `${level.toString().toUpperCase()}: ${message}`,
-          stripEmptyArray(args),
-        );
-      }
+    if (!this.shouldLog(level)) {
+      return;
+    }
+
+    if (this.useJson) {
+      console.log(JSON.stringify({ level, message, args }));
+    } else {
+      console.log(
+        `${level.toString().toUpperCase()}: ${message}`,
+        stripEmptyArray(args),
+      );
     }
   }
 }

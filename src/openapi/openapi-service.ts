@@ -7,7 +7,6 @@ import { format500ErrorMessage } from './common-responses';
 
 export class OpenApiService {
   private readonly config: IProxyConfig;
-
   private readonly api: IExpressOpenApi;
 
   constructor(config: IProxyConfig) {

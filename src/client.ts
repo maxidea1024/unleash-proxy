@@ -7,7 +7,7 @@ import {
 } from 'unleash-client';
 import type { FeatureInterface } from 'unleash-client/lib/feature';
 import type Metrics from 'unleash-client/lib/metrics';
-import { getDefaultVariant } from 'unleash-client/lib/variant';
+import { defaultVariant } from 'unleash-client/lib/variant';
 import type { IProxyConfig } from './config';
 import type { Logger } from './logger';
 import { lastMetricsFetch, lastMetricsUpdate } from './prom-metrics';
@@ -112,7 +112,7 @@ class Client extends EventEmitter implements IClient {
       });
       const variant = enabled
         ? this.unleash.getVariant(d.name, { ...context, sessionId })
-        : getDefaultVariant();
+        : defaultVariant;
 
       return {
         name: d.name,

@@ -61,5 +61,3 @@ export function createApp(
   openApiService.useErrorHandler(app);
   return app;
 }
-
-module.exports = { createApp };

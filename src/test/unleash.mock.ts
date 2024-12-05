@@ -1,21 +1,18 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { type Context, Unleash, type Variant } from 'unleash-client';
 import type { FeatureInterface } from 'unleash-client/lib/feature';
 import type { FallbackFunction } from 'unleash-client/lib/helpers';
 import type { UnleashConfig } from 'unleash-client/lib/unleash';
 import type { VariantWithFeatureStatus } from 'unleash-client/lib/variant';
 
-class FakeUnleash extends Unleash {
+export default class FakeUnleash extends Unleash {
   public toggleDefinitions: FeatureInterface[] = [];
-
   public contexts: Context[] = [];
-
   public unleashConfig: UnleashConfig;
 
   // fix constructor
   constructor(unleashConfig: UnleashConfig) {
     super(unleashConfig);
+
     super.destroy(); // prevent parent constructor initialization
     this.unleashConfig = unleashConfig;
   }
@@ -72,5 +69,3 @@ class FakeUnleash extends Unleash {
     throw new Error('Method not implemented.');
   }
 }
-
-export default FakeUnleash;

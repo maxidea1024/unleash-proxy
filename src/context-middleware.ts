@@ -2,16 +2,14 @@ import type { NextFunction, Request, Response } from 'express';
 import { createContext } from './create-context';
 import { type ContextEnricher, enrichContext } from './enrich-context';
 
-const POST = 'POST';
-const GET = 'GET';
-
 export const createContexMiddleware: Function =
   (contextEnrichers: ContextEnricher[]) =>
   async (req: Request, res: Response, next: NextFunction) => {
     let context: any = {};
-    if (req.method === GET) {
+
+    if (req.method === 'GET') {
       context = req.query || {};
-    } else if (req.method === POST) {
+    } else if (req.method === 'POST') {
       context = req.body.context || {};
     }
 
@@ -26,6 +24,4 @@ export const createContexMiddleware: Function =
     } catch (error: unknown) {
       next(error); // or res.status(500).send("Failed to process the context");
     }
-
-    return;
   };

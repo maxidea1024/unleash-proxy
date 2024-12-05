@@ -4,7 +4,7 @@ export const format500ErrorMessage = (errorMessage: string): string =>
   `Whoops! We dropped the ball on this one (an unexpected error occurred): ${errorMessage}`;
 
 export const NOT_READY_MSG =
-  'The Unleash Proxy has not connected to the Unleash API and is not ready to accept requests yet.';
+  'The Ganpa Proxy has not connected to the Ganpa API and is not ready to accept requests yet.';
 
 export const notReadyResponse: OpenAPIV3.ResponseObject = {
   description: "The proxy isn't ready to accept requests yet.",

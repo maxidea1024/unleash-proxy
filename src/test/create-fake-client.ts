@@ -22,6 +22,5 @@ export const createFakeClient = (
   });
 
   const client = new Client(config, unleash, metrics);
-
   return { client, metrics };
 };

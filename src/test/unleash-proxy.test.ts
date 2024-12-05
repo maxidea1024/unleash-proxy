@@ -1,4 +1,4 @@
-import request, { type Response } from 'supertest';
+import request from 'supertest';
 import { createApp } from '../app';
 import metrics from '../examples/metrics.json';
 import MockClient from './client.mock';
@@ -6,24 +6,22 @@ import MockClient from './client.mock';
 const unleashUrl = 'http://localhost:4242/test';
 const unleashApiToken = 's1';
 
-test('Should return empty list of toggles', () => {
+test('Should return empty list of toggles', async () => {
   const client = new MockClient();
 
   const proxySecrets = ['sdf'];
   const app = createApp({ proxySecrets, unleashUrl, unleashApiToken }, client);
   client.emit('ready');
 
-  return request(app)
+  const response = await request(app)
     .get('/proxy')
     .set('Authorization', 'sdf')
     .expect(200)
-    .expect('Content-Type', /json/)
-    .then((response: Response) => {
-      expect(response.body.toggles).toEqual([]);
-    });
+    .expect('Content-Type', /json/);
+  expect(response.body.toggles).toEqual([]);
 });
 
-test('Should return list of toggles', () => {
+test('Should return list of toggles', async () => {
   const toggles = [
     {
       name: 'test',
@@ -42,14 +40,12 @@ test('Should return list of toggles', () => {
   const app = createApp({ proxySecrets, unleashUrl, unleashApiToken }, client);
   client.emit('ready');
 
-  return request(app)
+  const response = await request(app)
     .get('/proxy')
     .set('Authorization', 'sdf')
     .expect(200)
-    .expect('Content-Type', /json/)
-    .then((response) => {
-      expect(response.body.toggles.length).toEqual(2);
-    });
+    .expect('Content-Type', /json/);
+  expect(response.body.toggles.length).toEqual(2);
 });
 
 test('Should handle POST with empty/nonsensical body', async () => {
@@ -141,7 +137,7 @@ test('Should handle POST with toggle names', () => {
     });
 });
 
-test('Should return list of toggles with custom proxy client key header', () => {
+test('Should return list of toggles with custom proxy client key header', async () => {
   const toggles = [
     {
       name: 'test',
@@ -168,17 +164,15 @@ test('Should return list of toggles with custom proxy client key header', () => 
   );
   client.emit('ready');
 
-  return request(app)
+  const response = await request(app)
     .get('/proxy')
     .set('NotAuthorized', 'sdf')
     .expect(200)
-    .expect('Content-Type', /json/)
-    .then((response) => {
-      expect(response.body.toggles.length).toEqual(2);
-    });
+    .expect('Content-Type', /json/);
+  expect(response.body.toggles.length).toEqual(2);
 });
 
-test('Should return list of toggles using env with multiple secrets', () => {
+test('Should return list of toggles using env with multiple secrets', async () => {
   process.env.UNLEASH_PROXY_SECRETS = 'secret1,secret2';
   const toggles = [
     {
@@ -197,17 +191,15 @@ test('Should return list of toggles using env with multiple secrets', () => {
   const app = createApp({ unleashUrl, unleashApiToken }, client);
   client.emit('ready');
 
-  return request(app)
+  const response = await request(app)
     .get('/proxy')
     .set('Authorization', 'secret2')
     .expect(200)
-    .expect('Content-Type', /json/)
-    .then((response) => {
-      expect(response.body.toggles.length).toEqual(2);
-    });
+    .expect('Content-Type', /json/);
+  expect(response.body.toggles.length).toEqual(2);
 });
 
-test('Should return list of toggles using env with multiple secrets with space', () => {
+test('Should return list of toggles using env with multiple secrets with space', async () => {
   process.env.UNLEASH_PROXY_SECRETS = 'secret11, secret22';
   const toggles = [
     {
@@ -226,14 +218,12 @@ test('Should return list of toggles using env with multiple secrets with space',
   const app = createApp({ unleashUrl, unleashApiToken }, client);
   client.emit('ready');
 
-  return request(app)
+  const response = await request(app)
     .get('/proxy')
     .set('Authorization', 'secret22')
     .expect(200)
-    .expect('Content-Type', /json/)
-    .then((response) => {
-      expect(response.body.toggles.length).toEqual(2);
-    });
+    .expect('Content-Type', /json/);
+  expect(response.body.toggles.length).toEqual(2);
 });
 
 test('Should send in context to mock', async () => {

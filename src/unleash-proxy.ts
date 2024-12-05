@@ -69,7 +69,6 @@ export default class UnleashProxy {
     const router = Router();
     this.middleware = router;
 
-    // Routes
     router.get(
       '',
       openApiService.validPath({
@@ -287,11 +286,6 @@ If you don't provide the \`toggles\` property, then this operation functions exa
     this.logger.info(
       'Successfully synchronized with Unleash API. Proxy is now ready to receive traffic.',
     );
-  }
-
-  // kept for backward compatibility
-  setProxySecrets(clientKeys: string[]): void {
-    this.setClientKeys(clientKeys);
   }
 
   setClientKeys(clientKeys: string[]): void {

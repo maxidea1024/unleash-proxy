@@ -3,17 +3,15 @@ import type { Context } from 'unleash-client';
 import type { FeatureInterface } from 'unleash-client/lib/feature';
 import type { FeatureToggleStatus, IClient, IMetrics } from '../client';
 
-class MockClient extends EventEmitter implements IClient {
+export default class MockClient extends EventEmitter implements IClient {
   public apiToken: String;
-
   public queriedContexts: Context[] = [];
-
   public toggles: FeatureToggleStatus[];
-
   public metrics: IMetrics[] = [];
 
   constructor(toggles: FeatureToggleStatus[] = []) {
     super();
+
     this.toggles = toggles;
     this.apiToken = 'default';
   }
@@ -63,5 +61,3 @@ class MockClient extends EventEmitter implements IClient {
     this.metrics.push(metrics);
   }
 }
-
-export default MockClient;

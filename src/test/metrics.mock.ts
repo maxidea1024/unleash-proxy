@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-
 import Metrics from 'unleash-client/lib/metrics';
 
-class FakeMetrics extends Metrics {
+export default class FakeMetrics extends Metrics {
   recordedCount: [string, boolean][] = [];
 
   recordedCountVariant: [string, string][] = [];
@@ -21,5 +19,3 @@ class FakeMetrics extends Metrics {
     return this;
   }
 }
-
-export default FakeMetrics;

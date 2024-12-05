@@ -88,13 +88,13 @@ function resolveStringToArray(value?: string): string[] | undefined {
 }
 
 function safeNumber(envVar: string | undefined, defaultVal: number): number {
-  if (envVar) {
-    try {
-      return Number.parseInt(envVar, 10);
-    } catch (err) {
-      return defaultVal;
-    }
-  } else {
+  if (!envVar) {
+    return defaultVal;
+  }
+
+  try {
+    return Number.parseInt(envVar, 10);
+  } catch (error: unknown) {
     return defaultVal;
   }
 }
@@ -103,6 +103,7 @@ function safeBoolean(envVar: string | undefined, defaultVal: boolean): boolean {
   if (envVar) {
     return envVar === 'true' || envVar === '1' || envVar === 't';
   }
+
   return defaultVal;
 }
 
@@ -112,6 +113,7 @@ function loadCustomStrategies(path?: string): Strategy[] | undefined {
     const strategies = require(path) as Strategy[];
     return strategies;
   }
+
   return undefined;
 }
 
@@ -133,10 +135,10 @@ export function sanitizeBasePath(path?: string): string {
 
 function loadCustomEnrichers(path?: string): ContextEnricher[] | undefined {
   if (path) {
-    // eslint-disable-next-line
     const contextEnrichers = require(path) as ContextEnricher[];
     return contextEnrichers;
   }
+
   return undefined;
 }
 
@@ -199,6 +201,7 @@ function loadBootstrapOptions(
       urlHeaders: headers,
     };
   }
+
   return undefined;
 }
 
