@@ -3,7 +3,7 @@ import type { OpenAPIV3 } from 'openapi-types';
 export const format500ErrorMessage = (errorMessage: string): string =>
   `Whoops! We dropped the ball on this one (an unexpected error occurred): ${errorMessage}`;
 
-export const NOT_READY_MSG =
+export const NOT_READY_MSG: string =
   'The Ganpa Proxy has not connected to the Ganpa API and is not ready to accept requests yet.';
 
 export const notReadyResponse: OpenAPIV3.ResponseObject = {
@@ -124,13 +124,13 @@ export const notImplementedError: OpenAPIV3.ResponseObject = {
 };
 
 const commonResponses = {
-  200: emptySuccessResponse,
-  400: badRequestResponse,
-  401: unauthorizedResponse,
-  415: unsupportedMediaTypeResponse,
-  500: internalServerErrorResponse,
-  501: notImplementedError,
-  503: notReadyResponse,
+  [200]: emptySuccessResponse,
+  [400]: badRequestResponse,
+  [401]: unauthorizedResponse,
+  [415]: unsupportedMediaTypeResponse,
+  [500]: internalServerErrorResponse,
+  [501]: notImplementedError,
+  [503]: notReadyResponse,
 } as const;
 
 type CommonResponses = typeof commonResponses;
