@@ -124,13 +124,13 @@ export const notImplementedError: OpenAPIV3.ResponseObject = {
 };
 
 const commonResponses = {
-  [200]: emptySuccessResponse,
-  [400]: badRequestResponse,
-  [401]: unauthorizedResponse,
-  [415]: unsupportedMediaTypeResponse,
-  [500]: internalServerErrorResponse,
-  [501]: notImplementedError,
-  [503]: notReadyResponse,
+  200: emptySuccessResponse,
+  400: badRequestResponse,
+  401: unauthorizedResponse,
+  415: unsupportedMediaTypeResponse,
+  500: internalServerErrorResponse,
+  501: notImplementedError,
+  503: notReadyResponse,
 } as const;
 
 type CommonResponses = typeof commonResponses;
