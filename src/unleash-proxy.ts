@@ -132,9 +132,9 @@ export default class UnleashProxy {
           ...standardResponses(401, 500, 501, 503),
           200: featuresResponse,
         },
-        description: `This endpoint returns all feature toggles known to the proxy, along with whether they are enabled or disabled for the provided context. This endpoint always returns **all** feature toggles the proxy retrieves from Unleash, in contrast to the \`/proxy\` endpoints that only return enabled toggles.
+        description: `This endpoint returns all feature toggles known to the proxy, along with whether they are enabled or disabled for the provided context. This endpoint always returns **all** feature toggles the proxy retrieves from Ganpa, in contrast to the \`/proxy\` endpoints that only return enabled toggles.
 
-Useful if you are migrating to unleash and need to know if the feature flag exists on the Unleash server.
+Useful if you are migrating to ganpa and need to know if the feature flag exists on the Ganpa server.
 
 However, using this endpoint will increase the payload size transmitted to your applications. Context values are provided as query parameters.`,
         summary: 'Retrieve all feature toggles from the proxy.',
@@ -174,8 +174,8 @@ If you don't provide the \`toggles\` property, then this operation functions exa
         requestBody: registerMetricsRequest,
         responses: standardResponses(200, 400, 401),
         description:
-          "This endpoint lets you register usage metrics with Unleash. Accepts either one of the proxy's configured `serverSideTokens` or one of its `clientKeys` for authorization.",
-        summary: 'Send usage metrics to Unleash.',
+          "This endpoint lets you register usage metrics with Ganpa. Accepts either one of the proxy's configured `serverSideTokens` or one of its `clientKeys` for authorization.",
+        summary: 'Send usage metrics to Ganpa.',
         tags: ['Operational', 'Server-side client'],
       }),
       this.registerMetrics.bind(this),
@@ -211,7 +211,7 @@ If you don't provide the \`toggles\` property, then this operation functions exa
           200: apiRequestResponse,
         },
         description:
-          "Returns the toggle configuration from the proxy's internal Unleash SDK. Use this to bootstrap other proxies and server-side SDKs. Requires you to provide one of the proxy's configured `serverSideTokens` for authorization.",
+          "Returns the toggle configuration from the proxy's internal Ganpa SDK. Use this to bootstrap other proxies and server-side SDKs. Requires you to provide one of the proxy's configured `serverSideTokens` for authorization.",
         summary:
           "Retrieve the proxy's current toggle configuration (as consumed by the internal client).",
         tags: ['Server-side client'],
@@ -227,8 +227,8 @@ If you don't provide the \`toggles\` property, then this operation functions exa
         requestBody: registerMetricsRequest,
         responses: standardResponses(200, 400, 401),
         description:
-          "This endpoint lets you register usage metrics with Unleash. Accepts either one of the proxy's configured `serverSideTokens` or one of its `clientKeys` for authorization.",
-        summary: 'Send usage metrics to Unleash.',
+          "This endpoint lets you register usage metrics with Ganpa. Accepts either one of the proxy's configured `serverSideTokens` or one of its `clientKeys` for authorization.",
+        summary: 'Send usage metrics to Ganpa.',
         tags: ['Operational', 'Server-side client'],
       }),
       this.registerMetrics.bind(this),
@@ -240,8 +240,8 @@ If you don't provide the \`toggles\` property, then this operation functions exa
         requestBody: registerClientRequest,
         responses: standardResponses(200, 400, 401),
         description:
-          "This endpoint lets you register application with Unleash. Accepts either one of the proxy's configured `serverSideTokens` or one of its `clientKeys` for authorization.",
-        summary: 'Register clients with Unleash.',
+          "This endpoint lets you register application with Ganpa. Accepts either one of the proxy's configured `serverSideTokens` or one of its `clientKeys` for authorization.",
+        summary: 'Register clients with Ganpa.',
         tags: ['Operational', 'Server-side client'],
       }),
       this.registerClient.bind(this),
@@ -284,7 +284,7 @@ If you don't provide the \`toggles\` property, then this operation functions exa
   private setReady() {
     this.ready = true;
     this.logger.info(
-      'Successfully synchronized with Unleash API. Proxy is now ready to receive traffic.',
+      'Successfully synchronized with Ganpa API. Proxy is now ready to receive traffic.',
     );
   }
 
