@@ -29,15 +29,15 @@ import type { RegisterClientSchema } from './openapi/spec/register-client-schema
 import { createContexMiddleware } from './context-middleware';
 
 export default class UnleashProxy {
-  private logger: Logger;
+  private readonly logger: Logger;
   private clientKeys: string[];
-  private serverSideTokens: string[];
-  private clientKeysHeaderName: string;
-  private client: IClient;
-  private contextEnrichers: ContextEnricher[];
+  private readonly serverSideTokens: string[];
+  private readonly clientKeysHeaderName: string;
+  private readonly client: IClient;
+  private readonly contextEnrichers: ContextEnricher[];
   private ready = false;
-  public middleware: Router;
-  private enableAllEndpoint = false;
+  public readonly middleware: Router;
+  private readonly enableAllEndpoint: boolean;
 
   constructor(
     client: IClient,

@@ -35,8 +35,8 @@ export interface Logger {
 }
 
 export class SimpleLogger implements Logger {
-  private logLevel: LogLevel;
-  private useJson: boolean;
+  private readonly logLevel: LogLevel;
+  private readonly useJson: boolean;
 
   constructor(logLevel: LogLevel = LogLevel.warn, useJson: boolean = false) {
     this.logLevel = logLevel;
