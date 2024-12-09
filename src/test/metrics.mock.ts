@@ -2,7 +2,6 @@ import Metrics from 'unleash-client/lib/metrics';
 
 export default class FakeMetrics extends Metrics {
   recordedCount: [string, boolean][] = [];
-
   recordedCountVariant: [string, string][] = [];
 
   start() {}
