@@ -50,16 +50,17 @@ export interface IClient extends EventEmitter {
   isReady(): boolean;
 }
 
-class Client extends EventEmitter implements IClient {
+export default class Client extends EventEmitter implements IClient {
   unleash: Unleash;
   private unleashApiToken: string;
-  private environment?: string;
-  private metrics: Metrics;
-  private logger: Logger;
+  private readonly environment?: string;
+  private readonly metrics: Metrics;
+  private readonly logger: Logger;
   private ready: boolean = false;
 
   constructor(config: IProxyConfig, unleash: Unleash, metrics: Metrics) {
     super();
+
     this.unleashApiToken = config.unleashApiToken;
     this.environment = config.environment;
     this.logger = config.logger;
@@ -101,8 +102,8 @@ class Client extends EventEmitter implements IClient {
       'Get all feature toggles for provided context',
       inContext,
     );
-    const context = this.fixContext(inContext);
 
+    const context = this.fixContext(inContext);
     const sessionId = context.sessionId || String(Math.random());
     const definitions = this.unleash.getFeatureToggleDefinitions() || [];
     return definitions.map((d) => {
@@ -128,8 +129,8 @@ class Client extends EventEmitter implements IClient {
       'Get enabled feature toggles for provided context',
       inContext,
     );
-    const context = this.fixContext(inContext);
 
+    const context = this.fixContext(inContext);
     const sessionId = context.sessionId || String(Math.random());
     const definitions = this.unleash.getFeatureToggleDefinitions() || [];
     return definitions
@@ -200,5 +201,3 @@ class Client extends EventEmitter implements IClient {
     return this.ready;
   }
 }
-
-export default Client;

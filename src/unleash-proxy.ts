@@ -398,11 +398,11 @@ If you don't provide the \`toggles\` property, then this operation functions exa
     }
   }
 
-  health(_: Request, res: Response<string>): void {
+  health(req: Request, res: Response<string>): void {
     res.send('ok');
   }
 
-  async prometheus(_: Request, res: Response<string>): Promise<void> {
+  async prometheus(req: Request, res: Response<string>): Promise<void> {
     res.set('Content-Type', promRegistry.contentType);
     res.send(await promRegistry.metrics());
   }
@@ -430,6 +430,7 @@ If you don't provide the \`toggles\` property, then this operation functions exa
     const validTokens = [...this.clientKeys, ...this.serverSideTokens];
 
     if (token && validTokens.includes(token)) {
+      // TODO: 왜 지원을 안하지?
       this.logger.debug('Client registration is not supported yet.');
       res.sendStatus(200);
     } else {

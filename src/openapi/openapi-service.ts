@@ -36,7 +36,7 @@ export class OpenApiService {
 
   // Catch and format Open API validation errors.
   useErrorHandler(app: Application): void {
-    app.use((err: any, _: any, res: any, next: any) => {
+    app.use((err: any, req: any, res: any, next: any) => {
       if (err?.status && err.validationErrors) {
         res.status(err.statusCode).json({
           error: err.message,
