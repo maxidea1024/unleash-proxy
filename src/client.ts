@@ -114,7 +114,6 @@ export default class Client extends EventEmitter implements IClient {
       const variant = enabled
         ? this.unleash.getVariant(d.name, { ...context, sessionId })
         : defaultVariant;
-
       return {
         name: d.name,
         enabled: enabled,
@@ -131,7 +130,7 @@ export default class Client extends EventEmitter implements IClient {
     );
 
     const context = this.fixContext(inContext);
-    const sessionId = context.sessionId || String(Math.random());
+    const sessionId = context.sessionId || String(Math.random()); // TODO: sessionId가 지정되지 않았을때 random이 맞나?
     const definitions = this.unleash.getFeatureToggleDefinitions() || [];
     return definitions
       .filter((d) => this.unleash.isEnabled(d.name, { ...context, sessionId }))
