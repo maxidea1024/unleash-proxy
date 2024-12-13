@@ -120,9 +120,11 @@ export default class Client extends EventEmitter implements IClient {
     });
   }
 
+  // ENABLED로 평가된 플래그들만 반환.
   getEnabledToggles(inContext: Context): FeatureToggleStatus[] {
+    // TODO: 이 로그는 제거해도 되지 싶은데? 당분간은 그냥 두자.
     this.logger.debug(
-      'Get enabled feature toggles for provided context',
+      'Get enabled feature flags for provided context',
       inContext,
     );
 
@@ -140,6 +142,7 @@ export default class Client extends EventEmitter implements IClient {
       }));
   }
 
+  // ENABLE/DISABLE 상관없이 모든 평가된 플래그들을 반환.
   getDefinedToggles(
     toggleNames: string[],
     inContext: Context,
