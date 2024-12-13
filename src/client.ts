@@ -51,7 +51,8 @@ export interface IClient extends EventEmitter {
 }
 
 export default class Client extends EventEmitter implements IClient {
-  unleash: Unleash;
+  readonly unleash: Unleash;
+
   private unleashApiToken: string;
   private readonly environment?: string;
   private readonly metrics: Metrics;
@@ -89,12 +90,10 @@ export default class Client extends EventEmitter implements IClient {
     this.unleashApiToken = unleashApiToken;
   }
 
+  // TODO: 이제 더이상 `environment` 는 사용하지 않지 않나?
   fixContext(context: Context): Context {
     const { environment } = this;
-    if (environment) {
-      return { ...context, environment };
-    }
-    return context;
+    return environment ? { ...context, environment } : context;
   }
 
   getAllToggles(inContext: Context): FeatureToggleStatus[] {
@@ -105,14 +104,12 @@ export default class Client extends EventEmitter implements IClient {
 
     const context = this.fixContext(inContext);
     const sessionId = context.sessionId || String(Math.random());
+    const contextWithSessionId = { ...context, sessionId };
     const definitions = this.unleash.getFeatureToggleDefinitions() || [];
     return definitions.map((d) => {
-      const enabled = this.unleash.isEnabled(d.name, {
-        ...context,
-        sessionId,
-      });
+      const enabled = this.unleash.isEnabled(d.name, contextWithSessionId);
       const variant = enabled
-        ? this.unleash.getVariant(d.name, { ...context, sessionId })
+        ? this.unleash.getVariant(d.name, contextWithSessionId)
         : defaultVariant;
       return {
         name: d.name,
@@ -131,16 +128,14 @@ export default class Client extends EventEmitter implements IClient {
 
     const context = this.fixContext(inContext);
     const sessionId = context.sessionId || String(Math.random()); // TODO: sessionId가 지정되지 않았을때 random이 맞나?
+    const contextWithSessionId = { ...context, sessionId };
     const definitions = this.unleash.getFeatureToggleDefinitions() || [];
     return definitions
-      .filter((d) => this.unleash.isEnabled(d.name, { ...context, sessionId }))
+      .filter((d) => this.unleash.isEnabled(d.name, contextWithSessionId))
       .map((d) => ({
         name: d.name,
         enabled: true,
-        variant: this.unleash.getVariant(d.name, {
-          ...context,
-          sessionId,
-        }),
+        variant: this.unleash.getVariant(d.name, contextWithSessionId),
         impressionData: d.impressionData,
       }));
   }

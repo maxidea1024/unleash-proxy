@@ -35,7 +35,7 @@ export function createContext(value: any): Context {
     sessionId,
     remoteAddress,
     currentTime: tryParseDate(currentTime),
-    properties: Object.assign({}, rest, properties),
+    properties: { ...rest, ...properties }, // Object.assign({}, rest, properties),
   };
 
   // Clean undefined properties on the context

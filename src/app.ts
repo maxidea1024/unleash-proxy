@@ -34,7 +34,7 @@ export function createApp(
   app.disable('x-powered-by');
   try {
     app.set('trust proxy', config.trustProxy);
-  } catch (err) {
+  } catch (err: unknown) {
     logger.error(
       `The provided "trustProxy" option was not valid ("${config.trustProxy}")`,
       err,
