@@ -134,7 +134,7 @@ export default class UnleashProxy {
         },
         description: `This endpoint returns all feature toggles known to the proxy, along with whether they are enabled or disabled for the provided context. This endpoint always returns **all** feature toggles the proxy retrieves from Ganpa, in contrast to the \`/proxy\` endpoints that only return enabled toggles.
 
-Useful if you are migrating to ganpa and need to know if the feature flag exists on the Ganpa server.
+Useful if you are migrating to togglet and need to know if the feature flag exists on the Ganpa server.
 
 However, using this endpoint will increase the payload size transmitted to your applications. Context values are provided as query parameters.`,
         summary: 'Retrieve all feature toggles from the proxy.',

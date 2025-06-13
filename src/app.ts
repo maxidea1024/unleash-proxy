@@ -3,7 +3,6 @@ import cors from 'cors';
 import express, { type Application } from 'express';
 import type { IClient } from './client';
 import { type IProxyOption, createProxyConfig } from './config';
-
 import requireContentType from './content-type-checker';
 import { createNewClient, createSingletonClient } from './create-client';
 import { OpenApiService } from './openapi/openapi-service';
