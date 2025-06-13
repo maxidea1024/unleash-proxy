@@ -8,7 +8,7 @@ export function start(opt: IProxyOption = {}): Application {
   const app = createApp(opt);
 
   app.listen(port, () =>
-    console.log(`Ganpa-proxy is listening on port ${port} ...`),
+    console.log(`Togglet-proxy is listening on port ${port} ...`),
   );
 
   return app;
