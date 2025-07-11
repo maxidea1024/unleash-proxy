@@ -279,7 +279,7 @@ test('Should send in context with ip as remoteAddress', async () => {
   expect(client.queriedContexts[0].remoteAddress).toEqual(userIp);
 });
 
-test('Should remove "undefined" environment field from context', async () => {
+test('Should use proxy environment when no environment in context', async () => {
   const toggles = [
     {
       name: 'test',
@@ -307,7 +307,76 @@ test('Should remove "undefined" environment field from context', async () => {
     .expect(200)
     .expect('Content-Type', /json/);
 
-  expect(client.queriedContexts[0]).not.toHaveProperty('environment');
+  expect(client.queriedContexts[0].environment).toBe('test');
+});
+
+test('Should respect environment from context over proxy environment', async () => {
+  const toggles = [
+    {
+      name: 'test',
+      enabled: true,
+      impressionData: true,
+    },
+  ];
+  const client = new MockClient(toggles);
+
+  const proxySecrets = ['sdf'];
+  const app = createApp(
+    {
+      unleashUrl,
+      unleashApiToken,
+      proxySecrets,
+      environment: 'proxy-env',
+    },
+    client,
+  );
+  client.emit('ready');
+
+  await request(app)
+    .get('/proxy?userId=123&environment=context-env')
+    .set('Authorization', 'sdf')
+    .expect(200)
+    .expect('Content-Type', /json/);
+
+  expect(client.queriedContexts[0].environment).toBe('context-env');
+});
+
+test('Should respect environment from POST context over proxy environment', async () => {
+  const toggles = [
+    {
+      name: 'test',
+      enabled: true,
+      impressionData: true,
+    },
+  ];
+  const client = new MockClient(toggles);
+
+  const proxySecrets = ['sdf'];
+  const app = createApp(
+    {
+      unleashUrl,
+      unleashApiToken,
+      proxySecrets,
+      environment: 'proxy-env',
+    },
+    client,
+  );
+  client.emit('ready');
+
+  await request(app)
+    .post('/proxy')
+    .send({
+      context: {
+        userId: '123',
+        environment: 'post-context-env',
+      },
+    })
+    .set('Accept', 'application/json')
+    .set('Authorization', 'sdf')
+    .expect(200)
+    .expect('Content-Type', /json/);
+
+  expect(client.queriedContexts[0].environment).toBe('post-context-env');
 });
 
 test('Providing a string for `properties` yields a 400', async () => {
@@ -578,7 +647,7 @@ test('Should register server SDK', async () => {
       unleashUrl,
       unleashApiToken,
       proxySecrets,
-      expServerSideSdkConfig: { tokens: ['s1'] },
+      serverSideSdkConfig: { tokens: ['s1'] },
     },
     client,
   );
@@ -637,7 +706,7 @@ test('/client/features should return toggle definitions', () => {
       unleashApiToken,
       proxySecrets,
       enableAllEndpoint: true,
-      expServerSideSdkConfig: { tokens: ['server-side'] },
+      serverSideSdkConfig: { tokens: ['server-side'] },
     },
     client,
   );
@@ -667,7 +736,7 @@ test('/client/features should not accept proxy secret', () => {
       unleashApiToken,
       proxySecrets,
       enableAllEndpoint: true,
-      expServerSideSdkConfig: { tokens: ['server-side'] },
+      serverSideSdkConfig: { tokens: ['server-side'] },
     },
     client,
   );

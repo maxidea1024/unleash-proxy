@@ -33,12 +33,12 @@ test('should add environment to isEnabled calls', () => {
   client.destroy();
 });
 
-test('should override environment to isEnabled calls', () => {
+test('should respect context environment over proxy environment', () => {
   const config = createProxyConfig({
     unleashApiToken: '123',
     unleashUrl: 'http://localhost:4242/api',
     proxySecrets: ['s1'],
-    environment: 'never-change-me',
+    environment: 'proxy-default',
     logLevel: LogLevel.error,
   });
 
@@ -57,9 +57,69 @@ test('should override environment to isEnabled calls', () => {
     project: 'default',
   });
 
-  client.getEnabledToggles({ environment: 'some' });
+  client.getEnabledToggles({ environment: 'context-environment' });
 
-  expect(fakeUnleash.contexts[0].environment).toBe('never-change-me');
+  expect(fakeUnleash.contexts[0].environment).toBe('context-environment');
+  client.destroy();
+});
+
+test('should use proxy environment as fallback when context has no environment', () => {
+  const config = createProxyConfig({
+    unleashApiToken: '123',
+    unleashUrl: 'http://localhost:4242/api',
+    proxySecrets: ['s1'],
+    environment: 'proxy-fallback',
+    logLevel: LogLevel.error,
+  });
+
+  const { client } = createFakeClient(config);
+
+  const fakeUnleash = client.unleash as FakeUnleash;
+
+  fakeUnleash.toggleDefinitions.push({
+    name: 'test',
+    enabled: false,
+    stale: false,
+    strategies: [],
+    variants: [],
+    impressionData: true,
+    type: 'experiment',
+    project: 'default',
+  });
+
+  client.getEnabledToggles({ userId: 'user123' }); // No environment in context
+
+  expect(fakeUnleash.contexts[0].environment).toBe('proxy-fallback');
+  client.destroy();
+});
+
+test('should not set environment when neither context nor proxy has one', () => {
+  const config = createProxyConfig({
+    unleashApiToken: '123',
+    unleashUrl: 'http://localhost:4242/api',
+    proxySecrets: ['s1'],
+    // No environment configured
+    logLevel: LogLevel.error,
+  });
+
+  const { client } = createFakeClient(config);
+
+  const fakeUnleash = client.unleash as FakeUnleash;
+
+  fakeUnleash.toggleDefinitions.push({
+    name: 'test',
+    enabled: false,
+    stale: false,
+    strategies: [],
+    variants: [],
+    impressionData: true,
+    type: 'experiment',
+    project: 'default',
+  });
+
+  client.getEnabledToggles({ userId: 'user123' }); // No environment in context
+
+  expect(fakeUnleash.contexts[0].environment).toBeUndefined();
   client.destroy();
 });
 

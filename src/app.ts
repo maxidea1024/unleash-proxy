@@ -15,7 +15,9 @@ export function createApp(
 ): Application {
   const config = createProxyConfig(options);
   const { logger } = config;
+
   logger.debug('Configuration:', config);
+
   const client =
     unleashClient ||
     (options.clientMode === 'new'
@@ -31,6 +33,7 @@ export function createApp(
   const proxy = new UnleashProxy(client, config, openApiService);
 
   app.disable('x-powered-by');
+
   try {
     app.set('trust proxy', config.trustProxy);
   } catch (err: unknown) {
@@ -55,8 +58,10 @@ export function createApp(
     requireContentType(),
     cors(corsOptions),
     express.json(),
-    proxy.middleware,
+    proxy.getMiddleware(),
   );
+
   openApiService.useErrorHandler(app);
+
   return app;
 }

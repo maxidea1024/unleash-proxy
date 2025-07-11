@@ -35,12 +35,9 @@ export const createContexMiddleware: Function =
         context = req.body.context || {};
       }
 
-      // currentTime, remoteAddress는 요청한쪽에서는 담아서 보낼필요가 없다.
-      // 보낸걸 아예 사용안하는것도 좋을듯한데?
-      // context.currentTime = context.currentTime || new Date().toISOString();
-      // context.remoteAddress = context.remoteAddress || req.ip;
-
       context.currentTime = new Date().toISOString();
+
+      // TODO 시간을 분해해서 의미있는 요소들로 분해해서 주입해준다.
 
       const clientIp = getClientIp(req);
       if (clientIp) {

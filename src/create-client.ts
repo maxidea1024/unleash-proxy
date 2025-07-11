@@ -55,8 +55,8 @@ export const createNewClient = (config: IProxyConfig): Client => {
     projectName: config.projectName,
     strategies: config.customStrategies,
     disableMetrics: true,
-    namePrefix: config.namePrefix, // Filtering(optional)
-    tags: config.tags, // Filtering(optional)
+    namePrefix: config.namePrefix,
+    tags: config.tags,
     customHeadersFunction,
     bootstrap: config.bootstrap,
     storageProvider: config.storageProvider,

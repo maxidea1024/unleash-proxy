@@ -9,6 +9,7 @@ export function generateInstanceId(): string {
     // unable to read info;
   }
 
+  // TODO uuid를 사용하는게 좋을듯?
   const prefix = info
     ? info.username
     : `generated-${Math.round(Math.random() * 1000000)}-${process.pid}`;

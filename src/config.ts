@@ -43,10 +43,10 @@ export interface IProxyOption {
   enableAllEndpoint?: boolean;
   storageProvider?: StorageProvider<ClientFeaturesResponse>;
   // experimental options
-  expBootstrap?: BootstrapOptions;
-  expServerSideSdkConfig?: ServerSideSdkConfig;
+  bootstrap?: BootstrapOptions;
+  serverSideSdkConfig?: ServerSideSdkConfig;
   httpOptions?: HttpOptions;
-  expCustomEnrichers?: ContextEnricher[];
+  customEnrichers?: ContextEnricher[];
   clientMode?: 'singleton' | 'new';
 }
 
@@ -76,7 +76,7 @@ export interface IProxyConfig {
   cors: CorsOptions;
   httpOptions?: HttpOptions;
   storageProvider?: StorageProvider<ClientFeaturesResponse>;
-  expCustomEnrichers?: ContextEnricher[];
+  customEnrichers?: ContextEnricher[];
 }
 
 function resolveStringToArray(value?: string): string[] | undefined {
@@ -173,8 +173,8 @@ function loadClientKeys(option: IProxyOption): string[] | undefined {
 function loadServerSideSdkConfig(
   option: IProxyOption,
 ): ServerSideSdkConfig | undefined {
-  if (option.expServerSideSdkConfig) {
-    return option.expServerSideSdkConfig;
+  if (option.serverSideSdkConfig) {
+    return option.serverSideSdkConfig;
   }
   const tokens = resolveStringToArray(
     process.env.EXP_SERVER_SIDE_SDK_CONFIG_TOKENS,
@@ -185,14 +185,14 @@ function loadServerSideSdkConfig(
 function loadBootstrapOptions(
   option: IProxyOption,
 ): BootstrapOptions | undefined {
-  if (option.expBootstrap) {
-    return option.expBootstrap;
+  if (option.bootstrap) {
+    return option.bootstrap;
   }
   const bootstrapUrl = process.env.EXP_BOOTSTRAP_URL;
-  const expBootstrapAuthorization = process.env.EXP_BOOTSTRAP_AUTHORIZATION;
+  const bootstrapAuthorization = process.env.EXP_BOOTSTRAP_AUTHORIZATION;
 
-  const headers = expBootstrapAuthorization
-    ? { Authorization: expBootstrapAuthorization }
+  const headers = bootstrapAuthorization
+    ? { Authorization: bootstrapAuthorization }
     : undefined;
 
   if (bootstrapUrl) {
@@ -297,7 +297,7 @@ export function createProxyConfig(option: IProxyOption): IProxyConfig {
     loadCustomStrategies(process.env.UNLEASH_CUSTOM_STRATEGIES_FILE);
 
   const customEnrichers =
-    option.expCustomEnrichers ||
+    option.customEnrichers ||
     loadCustomEnrichers(process.env.EXP_CUSTOM_ENRICHERS_FILE);
 
   const clientKeys = loadClientKeys(option);
@@ -327,7 +327,7 @@ export function createProxyConfig(option: IProxyOption): IProxyConfig {
       option.unleashAppName || process.env.UNLEASH_APP_NAME || 'unleash-proxy',
     unleashInstanceId,
     customStrategies,
-    expCustomEnrichers: customEnrichers,
+    customEnrichers: customEnrichers,
     clientKeys,
     proxyBasePath,
     refreshInterval:

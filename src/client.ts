@@ -90,10 +90,11 @@ export default class Client extends EventEmitter implements IClient {
     this.unleashApiToken = unleashApiToken;
   }
 
-  // TODO: 이제 더이상 `environment` 는 사용하지 않지 않나?
+  // Use the context's environment if provided, otherwise fall back to proxy's environment
   fixContext(context: Context): Context {
     const { environment } = this;
-    return environment ? { ...context, environment } : context;
+    // Only use proxy's environment as fallback if context doesn't have one
+    return context.environment ? context : (environment ? { ...context, environment } : context);
   }
 
   getAllToggles(inContext: Context): FeatureToggleStatus[] {
@@ -120,7 +121,6 @@ export default class Client extends EventEmitter implements IClient {
     });
   }
 
-  // ENABLED로 평가된 플래그들만 반환.
   getEnabledToggles(inContext: Context): FeatureToggleStatus[] {
     // TODO: 이 로그는 제거해도 되지 싶은데? 당분간은 그냥 두자.
     this.logger.debug(
@@ -129,7 +129,7 @@ export default class Client extends EventEmitter implements IClient {
     );
 
     const context = this.fixContext(inContext);
-    const sessionId = context.sessionId || String(Math.random()); // TODO: sessionId가 지정되지 않았을때 random이 맞나?
+    const sessionId = context.sessionId || String(Math.random());
     const contextWithSessionId = { ...context, sessionId };
     const definitions = this.unleash.getFeatureToggleDefinitions() || [];
     return definitions
@@ -142,7 +142,6 @@ export default class Client extends EventEmitter implements IClient {
       }));
   }
 
-  // ENABLE/DISABLE 상관없이 모든 평가된 플래그들을 반환.
   getDefinedToggles(
     toggleNames: string[],
     inContext: Context,

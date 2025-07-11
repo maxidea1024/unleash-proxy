@@ -36,8 +36,12 @@ export default class UnleashProxy {
   private readonly client: IClient;
   private readonly contextEnrichers: ContextEnricher[];
   private ready = false;
-  public readonly middleware: Router;
+  private readonly middleware: Router;
   private readonly enableAllEndpoint: boolean;
+
+  getMiddleware(): Router {
+    return this.middleware;
+  }
 
   constructor(
     client: IClient,
@@ -52,11 +56,12 @@ export default class UnleashProxy {
     this.clientKeysHeaderName = config.clientKeysHeaderName;
     this.client = client;
     this.enableAllEndpoint = config.enableAllEndpoint || false;
-    this.contextEnrichers = config.expCustomEnrichers
-      ? config.expCustomEnrichers
+    this.contextEnrichers = config.customEnrichers
+      ? config.customEnrichers
       : [];
 
-    const contextMiddleware = createContexMiddleware(this.contextEnrichers);
+    const contextMiddleware =
+      createContexMiddleware(this.contextEnrichers);
 
     if (client.isReady()) {
       this.setReady();
@@ -69,6 +74,9 @@ export default class UnleashProxy {
     const router = Router();
     this.middleware = router;
 
+//-------------------------------------------------------------------------
+
+    // GET /
     router.get(
       '',
       openApiService.validPath({
@@ -106,6 +114,30 @@ export default class UnleashProxy {
       this.getEnabledToggles.bind(this),
     );
 
+    // POST /
+    router.post(
+      '',
+      openApiService.validPath({
+        requestBody: lookupTogglesRequest,
+        responses: {
+          ...standardResponses(400, 401, 415, 500, 503),
+          200: featuresResponse,
+        },
+        description: `This endpoint accepts a JSON object with a \`context\` property and an optional \`toggles\` property.
+
+If you provide the \`toggles\` property, the proxy will use the provided context value to evaluate each of the toggles you sent in. The proxy returns a list with all the toggles you provided in their fully evaluated states.
+
+If you don't provide the \`toggles\` property, then this operation functions exactly the same as the GET operation on this endpoint, except that it uses the \`context\` property instead of query parameters: The proxy will evaluate all its toggles against the context you provide and return a list of enabled toggles.`,
+        summary: 'Evaluate specific toggles against the provided context.',
+        tags: ['Proxy client'],
+      }),
+      this.readyMiddleware.bind(this),
+      this.clientTokenMiddleware.bind(this),
+      contextMiddleware,
+      this.lookupToggles.bind(this),
+    );
+
+    // GET /all
     router.get(
       '/all',
       openApiService.validPath({
@@ -132,9 +164,9 @@ export default class UnleashProxy {
           ...standardResponses(401, 500, 501, 503),
           200: featuresResponse,
         },
-        description: `This endpoint returns all feature toggles known to the proxy, along with whether they are enabled or disabled for the provided context. This endpoint always returns **all** feature toggles the proxy retrieves from Ganpa, in contrast to the \`/proxy\` endpoints that only return enabled toggles.
+        description: `This endpoint returns all feature toggles known to the proxy, along with whether they are enabled or disabled for the provided context. This endpoint always returns **all** feature toggles the proxy retrieves from unleash, in contrast to the \`/proxy\` endpoints that only return enabled toggles.
 
-Useful if you are migrating to togglet and need to know if the feature flag exists on the Ganpa server.
+Useful if you are migrating to togglet and need to know if the feature flag exists on the unleash server.
 
 However, using this endpoint will increase the payload size transmitted to your applications. Context values are provided as query parameters.`,
         summary: 'Retrieve all feature toggles from the proxy.',
@@ -146,6 +178,7 @@ However, using this endpoint will increase the payload size transmitted to your 
       this.getAllToggles.bind(this),
     );
 
+    // POST /all
     router.post(
       '/all',
       openApiService.validPath({
@@ -168,41 +201,21 @@ If you don't provide the \`toggles\` property, then this operation functions exa
       this.getAllTogglesPOST.bind(this),
     );
 
+    // POST /all/client/metrics
     router.post(
       '/all/client/metrics',
       openApiService.validPath({
         requestBody: registerMetricsRequest,
         responses: standardResponses(200, 400, 401),
         description:
-          "This endpoint lets you register usage metrics with Ganpa. Accepts either one of the proxy's configured `serverSideTokens` or one of its `clientKeys` for authorization.",
-        summary: 'Send usage metrics to Ganpa.',
+          "This endpoint lets you register usage metrics with unleash. Accepts either one of the proxy's configured `serverSideTokens` or one of its `clientKeys` for authorization.",
+        summary: 'Send usage metrics to unleash.',
         tags: ['Operational', 'Server-side client'],
       }),
       this.registerMetrics.bind(this),
     );
 
-    router.post(
-      '',
-      openApiService.validPath({
-        requestBody: lookupTogglesRequest,
-        responses: {
-          ...standardResponses(400, 401, 415, 500, 503),
-          200: featuresResponse,
-        },
-        description: `This endpoint accepts a JSON object with a \`context\` property and an optional \`toggles\` property.
-
-If you provide the \`toggles\` property, the proxy will use the provided context value to evaluate each of the toggles you sent in. The proxy returns a list with all the toggles you provided in their fully evaluated states.
-
-If you don't provide the \`toggles\` property, then this operation functions exactly the same as the GET operation on this endpoint, except that it uses the \`context\` property instead of query parameters: The proxy will evaluate all its toggles against the context you provide and return a list of enabled toggles.`,
-        summary: 'Evaluate specific toggles against the provided context.',
-        tags: ['Proxy client'],
-      }),
-      this.readyMiddleware.bind(this),
-      this.clientTokenMiddleware.bind(this),
-      contextMiddleware,
-      this.lookupToggles.bind(this),
-    );
-
+    // GET /client/features
     router.get(
       '/client/features',
       openApiService.validPath({
@@ -211,42 +224,45 @@ If you don't provide the \`toggles\` property, then this operation functions exa
           200: apiRequestResponse,
         },
         description:
-          "Returns the toggle configuration from the proxy's internal Ganpa SDK. Use this to bootstrap other proxies and server-side SDKs. Requires you to provide one of the proxy's configured `serverSideTokens` for authorization.",
+          "Returns the toggle configuration from the proxy's internal unleash SDK. Use this to bootstrap other proxies and server-side SDKs. Requires you to provide one of the proxy's configured `serverSideTokens` for authorization.",
         summary:
           "Retrieve the proxy's current toggle configuration (as consumed by the internal client).",
         tags: ['Server-side client'],
       }),
       this.readyMiddleware.bind(this),
-      this.expServerSideTokenMiddleware.bind(this),
-      this.unleashApi.bind(this),
+      this.serverSideTokenMiddleware.bind(this),
+      this.getAllFeatureDefinitions.bind(this),
     );
 
+    // POST /client/metrics
     router.post(
       '/client/metrics',
       openApiService.validPath({
         requestBody: registerMetricsRequest,
         responses: standardResponses(200, 400, 401),
         description:
-          "This endpoint lets you register usage metrics with Ganpa. Accepts either one of the proxy's configured `serverSideTokens` or one of its `clientKeys` for authorization.",
-        summary: 'Send usage metrics to Ganpa.',
+          "This endpoint lets you register usage metrics with unleash. Accepts either one of the proxy's configured `serverSideTokens` or one of its `clientKeys` for authorization.",
+        summary: 'Send usage metrics to unleash.',
         tags: ['Operational', 'Server-side client'],
       }),
       this.registerMetrics.bind(this),
     );
 
+    // POST /client/register
     router.post(
       '/client/register',
       openApiService.validPath({
         requestBody: registerClientRequest,
         responses: standardResponses(200, 400, 401),
         description:
-          "This endpoint lets you register application with Ganpa. Accepts either one of the proxy's configured `serverSideTokens` or one of its `clientKeys` for authorization.",
-        summary: 'Register clients with Ganpa.',
+          "This endpoint lets you register application with unleash. Accepts either one of the proxy's configured `serverSideTokens` or one of its `clientKeys` for authorization.",
+        summary: 'Register clients with unleash.',
         tags: ['Operational', 'Server-side client'],
       }),
       this.registerClient.bind(this),
     );
 
+    // GET /health
     router.get(
       '/health',
       openApiService.validPath({
@@ -263,6 +279,7 @@ If you don't provide the \`toggles\` property, then this operation functions exa
       this.health.bind(this),
     );
 
+    // GET /internal-backstage/prometheus
     router.get(
       '/internal-backstage/prometheus',
       openApiService.validPath({
@@ -284,7 +301,7 @@ If you don't provide the \`toggles\` property, then this operation functions exa
   private setReady() {
     this.ready = true;
     this.logger.info(
-      'Successfully synchronized with Ganpa API. Proxy is now ready to receive traffic.',
+      'Successfully synchronized with unleash API. Proxy is now ready to receive traffic.',
     );
   }
 
@@ -292,7 +309,11 @@ If you don't provide the \`toggles\` property, then this operation functions exa
     this.clientKeys = clientKeys;
   }
 
-  private readyMiddleware(req: Request, res: Response, next: NextFunction) {
+  private readyMiddleware(
+    _: Request,
+    res: Response,
+    next: NextFunction
+  ) {
     if (!this.ready) {
       res.status(503).send(NOT_READY_MSG);
     } else {
@@ -313,7 +334,7 @@ If you don't provide the \`toggles\` property, then this operation functions exa
     }
   }
 
-  private expServerSideTokenMiddleware(
+  private serverSideTokenMiddleware(
     req: Request,
     res: Response,
     next: NextFunction,
@@ -327,8 +348,8 @@ If you don't provide the \`toggles\` property, then this operation functions exa
   }
 
   async getAllToggles(
-    req: Request,
-    res: Response<FeaturesSchema | string>,
+    _: Request,
+    res: Response<FeaturesSchema | string>
   ): Promise<void> {
     if (!this.enableAllEndpoint) {
       res
@@ -347,7 +368,7 @@ If you don't provide the \`toggles\` property, then this operation functions exa
 
   async getAllTogglesPOST(
     req: Request,
-    res: Response<FeaturesSchema | string>,
+    res: Response<FeaturesSchema | string>
   ): Promise<void> {
     if (!this.enableAllEndpoint) {
       res
@@ -372,8 +393,8 @@ If you don't provide the \`toggles\` property, then this operation functions exa
   }
 
   async getEnabledToggles(
-    req: Request,
-    res: Response<FeaturesSchema | string>,
+    _: Request,
+    res: Response<FeaturesSchema | string>
   ): Promise<void> {
     const { context } = res.locals;
     const toggles = this.client.getEnabledToggles(context);
@@ -385,9 +406,10 @@ If you don't provide the \`toggles\` property, then this operation functions exa
     req: Request<any, any, LookupTogglesSchema>,
     res: Response<FeaturesSchema | string>,
   ): Promise<void> {
-    res.set('Cache-control', 'public, max-age=2');
     const { toggles: toggleNames = [] } = req.body;
     const { context } = res.locals;
+
+    res.set('Cache-control', 'public, max-age=2');
 
     if (toggleNames.length > 0) {
       const toggles = this.client.getDefinedToggles(toggleNames, context);
@@ -398,13 +420,14 @@ If you don't provide the \`toggles\` property, then this operation functions exa
     }
   }
 
-  health(req: Request, res: Response<string>): void {
-    res.send('ok');
+  health(_: Request, res: Response<string>): void {
+    res.send('OK');
   }
 
-  async prometheus(req: Request, res: Response<string>): Promise<void> {
+  async prometheus(_: Request, res: Response<string>): Promise<void> {
+    const metrics = await promRegistry.metrics();
     res.set('Content-Type', promRegistry.contentType);
-    res.send(await promRegistry.metrics());
+    res.send(metrics);
   }
 
   registerMetrics(
@@ -430,15 +453,18 @@ If you don't provide the \`toggles\` property, then this operation functions exa
     const validTokens = [...this.clientKeys, ...this.serverSideTokens];
 
     if (token && validTokens.includes(token)) {
-      // TODO: 왜 지원을 안하지?
-      this.logger.debug('Client registration is not supported yet.');
+      this.logger.debug('Client registration is not supported yet.'); // TODO: 왜 지원을 안하지?
       res.sendStatus(200);
     } else {
       res.sendStatus(401);
     }
   }
 
-  unleashApi(req: Request, res: Response<string | ApiRequestSchema>): void {
+  getAllFeatureDefinitions(
+    _: Request,
+    res: Response<string | ApiRequestSchema>
+  ): void {
+    // Just returns the cached results.
     const features = this.client.getFeatureToggleDefinitions();
     res.set('Cache-control', 'public, max-age=2');
     res.send({ version: 2, features });
